@@ -22,6 +22,7 @@ $(shell mkdir -p $(BUILD_DIR))
 SRCS = \
 	$(SRCS_DIR)/Camera.cpp \
 	$(SRCS_DIR)/create_window.cpp \
+	$(SRCS_DIR)/Human.cpp \
 	$(SRCS_DIR)/inputs_manager.cpp \
 	$(SRCS_DIR)/instructions.cpp \
 	$(SRCS_DIR)/main.cpp \

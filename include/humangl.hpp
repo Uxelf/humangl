@@ -7,6 +7,7 @@
 #include <Vector4.hpp>
 #include <Camera.hpp>
 #include <Object.hpp>
+#include <Human.hpp>
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
