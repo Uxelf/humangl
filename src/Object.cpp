@@ -1,8 +1,13 @@
 #include <Object.hpp>
 
-// static void loadObjFile(const std::string& path, std::vector<float>* vertices_output, std::vector<unsigned int>* indices_output);
+Object::Object(): _material(NULL), _mesh(NULL), _parent(NULL)
+{
+    _scale = vec3(1, 1, 1);
+    _global_transform = mat4(1);
+    _local_transform = mat4(1);
+}
 
-Object::Object(const Material& material, Mesh* mesh): _material(material), _mesh(mesh), _parent(NULL)
+Object::Object(Material* material, Mesh* mesh): _material(material), _mesh(mesh), _parent(NULL)
 {
     _scale = vec3(1, 1, 1);
     _global_transform = mat4(1);
@@ -17,11 +22,11 @@ void Object::render(){
     if(_update_matrix){
         updateMatrix();
     }
-    if (_mesh != NULL){
-        _material.useShader();
+    if (_mesh != NULL && _material != NULL){
+        _material->useShader();
 
-        _material.getShader().setMat4("model", _global_transform);
-        _material.setGenericShadersUniforms();
+        _material->getShader().setMat4("model", _global_transform);
+        _material->setGenericShadersUniforms();
         _mesh->render();
     }
 }
@@ -41,6 +46,8 @@ void Object::updateMatrix(){
 void Object::setPosition(const vec3& new_position){
     _position = new_position;
     _local_transform.translate(_position);
+
+    updateMatrix();
 }
 
 void Object::setRotation(const vec3& new_rotation){

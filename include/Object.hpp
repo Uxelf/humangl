@@ -13,7 +13,7 @@
 class Object
 {
 private:
-    Material    _material;
+    Material*   _material;
     Mesh*       _mesh;
     vec3        _position;
     vec3        _rotation;
@@ -29,7 +29,8 @@ private:
     void addChild(Object* child);
     void removeChild(Object* child);
 public:
-    Object(const Material& material, Mesh* mesh);
+    Object();
+    Object(Material* material, Mesh* mesh);
     ~Object();
 
     void render();
@@ -40,7 +41,7 @@ public:
     const vec3  getRotation() const {return _rotation;}
     const vec3  getScale() const {return _scale;}
 
-    void setColor(const vec3& new_color) {_material.setColor(new_color);}
+    void setColor(const vec3& new_color) {if (_material != NULL) _material->setColor(new_color);}
     void setPosition(const vec3& new_position);
     void setRotation(const vec3& new_rotation);
     void setScale(const vec3& new_scale);
