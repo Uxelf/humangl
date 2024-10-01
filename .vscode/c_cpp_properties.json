@@ -5,7 +5,7 @@
             "includePath": [
                 "${workspaceFolder}/**",
                 "${workspaceFolder}/others/GLAD/include/*/*",
-                "${workspaceFolder}/others/stb/*"
+                "${workspaceFolder}/others/imgui/*"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/gcc",

@@ -24,6 +24,32 @@ void processInput(GLFWwindow* window, Camera& camera, float delta_time){
         movement = movement + vec3(0, 1, 0) * CAMERA_SPEED * delta_time;
     if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
         movement = movement - vec3(0, 1, 0) * CAMERA_SPEED * delta_time ;
+
+    
+    static float pitch = 0; 
+    static float yaw = 90;
+    float xoffset = 0, yoffset = 0;
+    if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
+        xoffset += -delta_time;
+    if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
+        xoffset += delta_time;
+    if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
+        yoffset += delta_time;
+    if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
+        yoffset += -delta_time;
+    
+    
+    yaw += xoffset * CAMERA_SENSIBILITY * 20000;
+    pitch += yoffset * CAMERA_SENSIBILITY * 20000;
+    if (pitch > 89.0f)
+        pitch = 89.0f;
+    else if (pitch < -89.0f)
+        pitch = -89.0f;
+    vec3 direction;
+    direction[0] = -cos(DEG_TO_RAD(yaw)) * cos(DEG_TO_RAD(pitch));
+    direction[1] = sin(DEG_TO_RAD(pitch));
+    direction[2] = -sin(DEG_TO_RAD(yaw)) * cos(DEG_TO_RAD(pitch));
+    camera.setFront(direction.normalized());
     
     camera.move(movement);
 }
@@ -31,6 +57,7 @@ void processInput(GLFWwindow* window, Camera& camera, float delta_time){
 
 
 void mouse_callback(GLFWwindow* window, double xpos, double ypos){
+    return;
     static float lastX = SCR_WIDTH / 2;
     static float lastY = SCR_HEIGHT / 2;
     static bool firstMouse = true;

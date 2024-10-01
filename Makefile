@@ -12,8 +12,9 @@ SRCS_DIR = src
 BUILD_DIR = build
 OTHERS_DIR = others
 GLAD_DIR = $(OTHERS_DIR)/GLAD
+IMGUI_DIR = $(OTHERS_DIR)/imgui
 
-INCLUDE_DIRS = -I./include -I./$(GLAD_DIR)/include -I./$(OTHERS_DIR)/stb
+INCLUDE_DIRS = -I./include -I./$(GLAD_DIR)/include -I./$(IMGUI_DIR)
 
 # Create directories if they don't exist
 $(shell mkdir -p $(BUILD_DIR))
@@ -35,12 +36,17 @@ SRCS = \
 	$(SRCS_DIR)/uniform_buffers.cpp \
 	$(SRCS_DIR)/Vector3.cpp \
 	$(SRCS_DIR)/Vector4.cpp \
-	others/GLAD/src/glad.c 
-
+	$(GLAD_DIR)/src/glad.c \
+	$(IMGUI_DIR)/imgui_demo.cpp \
+	$(IMGUI_DIR)/imgui_draw.cpp \
+	$(IMGUI_DIR)/imgui_impl_glfw.cpp \
+	$(IMGUI_DIR)/imgui_impl_opengl3.cpp \
+	$(IMGUI_DIR)/imgui_tables.cpp \
+	$(IMGUI_DIR)/imgui_widgets.cpp \
+	$(IMGUI_DIR)/imgui.cpp
 
 # Object files
-OBJS = $(patsubst $(SRCS_DIR)/%.cpp,$(BUILD_DIR)/%.o,$(patsubst $(GLAD_DIR)/src/%.c,$(BUILD_DIR)/%.o,$(SRCS)))
-
+OBJS = $(patsubst $(SRCS_DIR)/%.cpp,$(BUILD_DIR)/%.o,$(patsubst $(GLAD_DIR)/src/%.c,$(BUILD_DIR)/%.o,$(patsubst $(IMGUI_DIR)/%.cpp,$(BUILD_DIR)/%.o,$(SRCS))))
 
 # Dependency files
 DEPS = $(patsubst $(BUILD_DIR)/%.o,$(BUILD_DIR)/%.d,$(OBJS))
@@ -60,6 +66,10 @@ $(BUILD_DIR)/%.o: $(SRCS_DIR)/%.cpp
 	@mkdir -p $(dir $@)
 
 $(BUILD_DIR)/%.o: $(GLAD_DIR)/src/%.c
+	$(CXX) $(CXXFLAGS) $(INCLUDE_DIRS) -c $< -o $@
+	@mkdir -p $(dir $@)
+
+$(BUILD_DIR)/%.o: $(IMGUI_DIR)/%.cpp
 	$(CXX) $(CXXFLAGS) $(INCLUDE_DIRS) -c $< -o $@
 	@mkdir -p $(dir $@)
 

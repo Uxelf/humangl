@@ -19,6 +19,7 @@ public:
     ~vec3();
 
     const float* value_ptr() const;
+    float* value_ptr();
     
     float& operator[](int index);
     const float& operator[](int index) const;

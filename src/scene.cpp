@@ -5,6 +5,10 @@ float last_frame = 0.0f;
 
 Camera camera(80, (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1, 100.0f);
 
+void saludar(){
+    std::cout << "Geloo" << std::endl;
+}
+
 void loadScene(GLFWwindow* window){
 
     glClearColor(0.1, 0.1, 0.1, 1.0f);
@@ -50,8 +54,24 @@ void loadScene(GLFWwindow* window){
 
     glEnable(GL_DEPTH_TEST);
     // glPolygonMode(GL_FRONT_AND_BACK, [MODE]); // GL_LINE = Wireframe ; GL_FILL = Fill
-    glfwMakeContextCurrent(window);
     glfwSwapInterval(1); //Vsync (not working in wsl)
+
+
+    //* UI
+
+    ImGui::CreateContext();
+    ImGui_ImplGlfw_InitForOpenGL(window, true);
+    ImGui_ImplOpenGL3_Init("#version 400");
+    ImGui::StyleColorsDark();
+
+    vec3 body_vector[10];
+
+    ImGuiIO& io = ImGui::GetIO(); (void)io;
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
+
+    std::string parts[] = {"Chest", "Head", "Left_Upper_Arm", "Left_Forearm", "Right_Upper_Arm", "Right_Forearm", "Left_Upper_Leg", "Left_Foreleg", "Right_Upper_Leg", "Right_Foreleg"};
+    float time;
 
     //* Render loop
     camera.move(vec3(0, 2, 10));
@@ -65,6 +85,30 @@ void loadScene(GLFWwindow* window){
         processInput(window, camera, delta_time);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+        ImGui_ImplOpenGL3_NewFrame();
+        ImGui_ImplGlfw_NewFrame();
+        ImGui::NewFrame();
+
+        {
+
+            ImGui::Begin("Animation controller");
+
+            ImGui::SliderFloat("Time", &time, 0, 10);
+            for (int i = 0; i < 10; i++){
+                std::string part_str = parts[i];
+                ImGui::DragFloat3(part_str.c_str(), body_vector[i].value_ptr());
+                if (ImGui::Button(("Save pose " + part_str).c_str()))
+                    human.addKeyFrame(static_cast<BODY_PART>(i), body_vector[i], time);
+            }
+
+
+            ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
+            ImGui::End();
+        }
+
+        for (int i = 0; i < 10; i++)
+            human.pose(static_cast<BODY_PART>(i), body_vector[i]);
+
         const mat4& projection = camera.getPerspectiveProjection();
         const mat4& view = camera.getViewMatrix();
 
@@ -76,8 +120,17 @@ void loadScene(GLFWwindow* window){
         for (unsigned int i = 0; i < scene_objects.size(); i++){
             scene_objects[i]->render();
         }
+
+
+
+        ImGui::Render();
+        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
         
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
+
+    ImGui_ImplOpenGL3_Shutdown();
+    ImGui_ImplGlfw_Shutdown();
+    ImGui::DestroyContext();
 }

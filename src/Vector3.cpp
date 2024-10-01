@@ -23,6 +23,10 @@ const float* vec3::value_ptr() const{
     return &(_data[0]);
 }
 
+float* vec3::value_ptr(){
+    return &(_data[0]);
+}
+
 float& vec3::operator[](int index) {
     if (index < 0 || index >= 3) throw std::out_of_range("Index out of range");
     return _data[index];
