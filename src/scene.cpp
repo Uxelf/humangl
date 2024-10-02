@@ -5,7 +5,7 @@ float last_frame = 0.0f;
 
 Camera camera(80, (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1, 100.0f);
 
-void drawTimeline(float time, float time_min, float time_max, std::map<Object*, std::map<float,vec3>> _objects_keyframes);
+void drawTimeline(float& time, float time_min, float time_max, std::map<Object*, std::map<float,vec3>> _objects_keyframes);
 
 void loadScene(GLFWwindow* window){
 
@@ -164,8 +164,11 @@ void loadScene(GLFWwindow* window){
 }
 
 
+#include <set>
+void drawTimeline(float& time, float time_min, float time_max, std::map<Object*, std::map<float,vec3>> _objects_keyframes) {
 
-void drawTimeline(float time, float time_min, float time_max, std::map<Object*, std::map<float,vec3>> _objects_keyframes) {
+
+
     // Get the ImGui window draw list for custom rendering
     ImDrawList* draw_list = ImGui::GetWindowDrawList();
 
@@ -179,6 +182,7 @@ void drawTimeline(float time, float time_min, float time_max, std::map<Object*, 
 
     // Iterate over each object and its keyframes
     int object_index = 0;
+    std::set<float> timestamps;
     for (auto& [object, keyframes] : _objects_keyframes) {
         float y_top = window_pos.y + line_height * object_index;   // Top Y of the space allocated for the object
         float y_center = y_top + line_height / 2.0f;               // Y coordinate for drawing the timeline in the middle
@@ -195,12 +199,29 @@ void drawTimeline(float time, float time_min, float time_max, std::map<Object*, 
         for (const auto& [keyframe_time, vec] : keyframes) {
             float x = window_pos.x + name_offset + (keyframe_time - time_min) / (time_max - time_min) * timeline_length;
             draw_list->AddCircleFilled(ImVec2(x, y_center), circle_radius, IM_COL32(255, 0, 0, 255));
+            timestamps.insert(keyframe_time);
         }
 
         object_index++;
     }
-
     // Draw the time bar (vertical line indicating the current time)
     draw_list->AddLine(ImVec2(time_bar_x, window_pos.y), ImVec2(time_bar_x, window_pos.y + line_height * object_index), IM_COL32(0, 255, 0, 255), 2.0f);
+
+    if (ImGui::Button("<")){
+        auto it = timestamps.lower_bound(time);
+        if (it != timestamps.begin()){
+            it--;
+            if (it != timestamps.begin() && *it == time)
+                it--;
+            time = *it;
+        }
+    }
+    ImGui::SameLine();
+    if (ImGui::Button(">")){
+        auto it = timestamps.upper_bound(time);
+        if (it != timestamps.end()){
+            time = *it;
+        }
+    }
 
 }
