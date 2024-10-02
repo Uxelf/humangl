@@ -71,7 +71,10 @@ void loadScene(GLFWwindow* window){
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
 
     std::string parts[] = {"Chest", "Head", "Left_Upper_Arm", "Left_Forearm", "Right_Upper_Arm", "Right_Forearm", "Left_Upper_Leg", "Left_Foreleg", "Right_Upper_Leg", "Right_Foreleg"};
-    float time;
+    float time = 0;
+    float time_limit = 10;
+    Animation_controller anim;
+    bool play = false;
 
     //* Render loop
     camera.move(vec3(0, 2, 10));
@@ -90,15 +93,37 @@ void loadScene(GLFWwindow* window){
         ImGui::NewFrame();
 
         {
-
             ImGui::Begin("Animation controller");
+            ImGui::InputFloat("Time limit", &time_limit);
+            if (ImGui::Button("Play"))
+                play = true;
+            ImGui::SameLine();
+            if (ImGui::Button("Stop"))
+                play = false;
 
-            ImGui::SliderFloat("Time", &time, 0, 10);
+            if (play)
+                time += delta_time;
+            if (time > time_limit)
+                time -= time_limit;
+            if (time < 0)
+                time = 0;
+            if (play){
+                anim.animate(time);
+                for (int i = 0; i < 10; i++){
+                    body_vector[i] = human.getBodyPart(static_cast<BODY_PART>(i))->getRotation();
+                }
+            }
+            if (ImGui::SliderFloat("Time", &time, 0, time_limit)){
+                anim.animate(time);
+                for (int i = 0; i < 10; i++){
+                    body_vector[i] = human.getBodyPart(static_cast<BODY_PART>(i))->getRotation();
+                }
+            }
             for (int i = 0; i < 10; i++){
                 std::string part_str = parts[i];
                 ImGui::DragFloat3(part_str.c_str(), body_vector[i].value_ptr());
                 if (ImGui::Button(("Save pose " + part_str).c_str()))
-                    human.addKeyFrame(static_cast<BODY_PART>(i), body_vector[i], time);
+                    anim.addKeyframe(human.getBodyPart(static_cast<BODY_PART>(i)), time, body_vector[i]);
             }
 
 

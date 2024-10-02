@@ -96,22 +96,10 @@ void Human::addObjectsToScene(std::vector<Object*>& scene_objects){
 
 }
 
-void Human::addKeyFrame(const BODY_PART body_part, const vec3& rotation, const float time){
-    (void)body_part;
-    (void)time;
-    (void)rotation;
-
-}
-
-void Human::removeKeyFrame(const BODY_PART body_part, const float time){
-    (void)body_part;
-    (void)time;
-}
-
 void Human::pose(const BODY_PART body_part, const vec3& rotation){
     _skeleton[body_part].setRotation(rotation);
 }
 
-void Human::animate(const float time){
-    (void)time;
+Object* Human::getBodyPart(const BODY_PART body_part){
+    return &(_skeleton[body_part]);
 }

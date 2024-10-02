@@ -9,6 +9,7 @@
 #include <Object.hpp>
 #include <Human.hpp>
 #include <Shader.hpp>
+#include <Animation_controller.hpp>
 
 #include <imgui.h>
 #include <imgui_impl_glfw.h>

@@ -21,6 +21,7 @@ $(shell mkdir -p $(BUILD_DIR))
 
 # Source files
 SRCS = \
+	$(SRCS_DIR)/Animation_controller.cpp \
 	$(SRCS_DIR)/Camera.cpp \
 	$(SRCS_DIR)/create_window.cpp \
 	$(SRCS_DIR)/Human.cpp \
