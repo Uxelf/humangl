@@ -4,6 +4,8 @@ float delta_time = 0.0f;
 float last_frame = 0.0f;
 
 Camera camera(80, (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1, 100.0f);
+Object central_pivot;
+Object camera_pivot;
 
 void drawTimeline(float& time, float time_min, float time_max, std::map<Object*, std::map<float,vec3>> _objects_keyframes);
 
@@ -73,17 +75,33 @@ void loadScene(GLFWwindow* window){
     float time_limit = 10;
     Animation_controller anim;
     bool play = false;
+    char file_name[200];
+    file_name[0] = 0;
+
+    for (int i = 0; i < 10; i++){
+        anim.registerObject(human.getBodyPart(static_cast<BODY_PART>(i)));
+    }
 
     //* Render loop
-    camera.move(vec3(0, 2, 10));
+
+    //!Camera thingis
+    
+    central_pivot.setName("Cameraman");
+    camera_pivot.setParent(&central_pivot);
+    camera_pivot.move(vec3(0, 2, 10));
+    scene_objects.push_back(&central_pivot);
+    scene_objects.push_back(&camera_pivot);
+
 
     while(!glfwWindowShouldClose(window)){
         
+        central_pivot.rotate(vec3(0, 0.2, 0));
+
         float current_frame = glfwGetTime();
         delta_time = current_frame - last_frame;
         last_frame = current_frame;  
 
-        processInput(window, camera, delta_time);
+        processInput(window, delta_time);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         ImGui_ImplOpenGL3_NewFrame();
@@ -92,6 +110,12 @@ void loadScene(GLFWwindow* window){
 
         {
             ImGui::Begin("Animation controller");
+            ImGui::InputText("File", file_name, 200);
+            if (ImGui::Button("Save"))
+                anim.saveAnimation(file_name);
+            ImGui::SameLine();
+            if (ImGui::Button("Load"))
+                anim.loadAnimation(file_name);
             ImGui::InputFloat("Time limit", &time_limit);
             if (ImGui::Button("Play"))
                 play = true;
@@ -167,8 +191,6 @@ void loadScene(GLFWwindow* window){
 #include <set>
 void drawTimeline(float& time, float time_min, float time_max, std::map<Object*, std::map<float,vec3>> _objects_keyframes) {
 
-
-
     // Get the ImGui window draw list for custom rendering
     ImDrawList* draw_list = ImGui::GetWindowDrawList();
 
@@ -176,7 +198,7 @@ void drawTimeline(float& time, float time_min, float time_max, std::map<Object*,
     ImVec2 window_pos = ImGui::GetCursorScreenPos();  // Top-left corner of the window
     float line_height = 40.0f;  // Height allocated for each object's line
     float circle_radius = 5.0f; // Radius of the keyframe dots
-    float timeline_length = 600.0f;  // Length of the timeline in pixels
+    float timeline_length = 400.0f;  // Length of the timeline in pixels
     float name_offset = 120.0f; // Space on the left for object names
     float time_bar_x = window_pos.x + name_offset + (time - time_min) / (time_max - time_min) * timeline_length;
 

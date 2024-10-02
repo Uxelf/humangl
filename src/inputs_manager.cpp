@@ -1,57 +1,36 @@
 #include <humangl.hpp>
 
 extern Camera camera;
+extern Object central_pivot;
+extern Object camera_pivot;
 
-void processInput(GLFWwindow* window, Camera& camera, float delta_time){
+void processInput(GLFWwindow* window, float delta_time){
 
     if(glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
 
-    vec3 fp_direction = camera.front();
-    fp_direction.y = 0;
-    fp_direction = fp_direction.normalized();
-    vec3 movement;
-    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-        movement = movement + fp_direction * CAMERA_SPEED * delta_time;
-    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-        movement = movement - fp_direction * CAMERA_SPEED * delta_time;
-    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-        movement = movement - camera.right() * CAMERA_SPEED * delta_time;
-    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-        movement = movement + camera.right() * CAMERA_SPEED * delta_time;
-
-    if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
-        movement = movement + vec3(0, 1, 0) * CAMERA_SPEED * delta_time;
-    if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
-        movement = movement - vec3(0, 1, 0) * CAMERA_SPEED * delta_time ;
-
-    
-    static float pitch = 0; 
     static float yaw = 90;
-    float xoffset = 0, yoffset = 0;
+    float xoffset = 0, zoffset = 0;
     if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
-        xoffset += -delta_time;
-    if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
         xoffset += delta_time;
+    if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
+        xoffset += -delta_time;
     if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
-        yoffset += delta_time;
+        zoffset += -delta_time * CAMERA_SPEED;
     if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
-        yoffset += -delta_time;
+        zoffset += delta_time * CAMERA_SPEED;
     
-    
+    camera_pivot.move(vec3(0, 0, zoffset));
+
     yaw += xoffset * CAMERA_SENSIBILITY * 20000;
-    pitch += yoffset * CAMERA_SENSIBILITY * 20000;
-    if (pitch > 89.0f)
-        pitch = 89.0f;
-    else if (pitch < -89.0f)
-        pitch = -89.0f;
     vec3 direction;
-    direction[0] = -cos(DEG_TO_RAD(yaw)) * cos(DEG_TO_RAD(pitch));
-    direction[1] = sin(DEG_TO_RAD(pitch));
-    direction[2] = -sin(DEG_TO_RAD(yaw)) * cos(DEG_TO_RAD(pitch));
+    direction[0] = -cos(DEG_TO_RAD(yaw));
+    direction[1] = 0;
+    direction[2] = -sin(DEG_TO_RAD(yaw));
+    central_pivot.setRotation(vec3(0, -yaw + 90, 0));
+
     camera.setFront(direction.normalized());
-    
-    camera.move(movement);
+    camera.moveTo(camera_pivot.getGlobalPosition());
 }
 
 

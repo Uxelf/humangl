@@ -40,6 +40,7 @@ public:
     const mat4& getGlobalTransform() const {return _global_transform;}
     const mat4& getLocalTransform() const {return _local_transform;}
     const vec3  getPosition() const {return _position;}
+    const vec3  getGlobalPosition() const;
     const vec3  getRotation() const {return _rotation;}
     const vec3  getScale() const {return _scale;}
     const std::string getName() const {return _name;}

@@ -4,6 +4,10 @@
 #include <Object.hpp>
 #include <vector>
 #include <map>
+#include <filesystem>
+#include <ostream>
+
+const std::string animations_folder = "animations";
 
 class Animation_controller
 {
@@ -17,9 +21,11 @@ public:
     const std::map<Object*, std::map<float,vec3>> getObjectsKeyframes() const {return _objects_keyframes;}
     void registerObject(Object* object);
     void addKeyframe(Object* object, const float time, const vec3& rotation);
-    void showKeys(Object* object);
 
     void animate(float time);
+
+    void saveAnimation(const std::string& file_name);
+    void loadAnimation(const std::string& file_name);
 };
 
 

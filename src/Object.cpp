@@ -43,6 +43,14 @@ void Object::updateMatrix(){
         _childs[i]->markUpdateMatrix();
 }
 
+const vec3 Object::getGlobalPosition() const{
+    vec3 position;
+    position.x = _global_transform[3][0];
+    position.y = _global_transform[3][1];
+    position.z = _global_transform[3][2];
+    return position;
+}
+
 void Object::setPosition(const vec3& new_position){
     _position = new_position;
     _local_transform.translate(_position);
