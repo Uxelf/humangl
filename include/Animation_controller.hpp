@@ -14,6 +14,7 @@ public:
     Animation_controller();
     ~Animation_controller();
 
+    const std::map<Object*, std::map<float,vec3>> getObjectsKeyframes() const {return _objects_keyframes;}
     void registerObject(Object* object);
     void addKeyframe(Object* object, const float time, const vec3& rotation);
     void showKeys(Object* object);

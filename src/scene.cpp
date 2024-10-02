@@ -5,9 +5,7 @@ float last_frame = 0.0f;
 
 Camera camera(80, (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1, 100.0f);
 
-void saludar(){
-    std::cout << "Geloo" << std::endl;
-}
+void drawTimeline(float time, float time_min, float time_max, std::map<Object*, std::map<float,vec3>> _objects_keyframes);
 
 void loadScene(GLFWwindow* window){
 
@@ -125,9 +123,14 @@ void loadScene(GLFWwindow* window){
                 if (ImGui::Button(("Save pose " + part_str).c_str()))
                     anim.addKeyframe(human.getBodyPart(static_cast<BODY_PART>(i)), time, body_vector[i]);
             }
-
-
             ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
+            ImGui::End();
+
+
+            ImGui::Begin("Timeline");
+
+            drawTimeline(time, 0, time_limit, anim.getObjectsKeyframes());
+
             ImGui::End();
         }
 
@@ -158,4 +161,46 @@ void loadScene(GLFWwindow* window){
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();
+}
+
+
+
+void drawTimeline(float time, float time_min, float time_max, std::map<Object*, std::map<float,vec3>> _objects_keyframes) {
+    // Get the ImGui window draw list for custom rendering
+    ImDrawList* draw_list = ImGui::GetWindowDrawList();
+
+    // Define the window size and timeline dimensions
+    ImVec2 window_pos = ImGui::GetCursorScreenPos();  // Top-left corner of the window
+    float line_height = 40.0f;  // Height allocated for each object's line
+    float circle_radius = 5.0f; // Radius of the keyframe dots
+    float timeline_length = 600.0f;  // Length of the timeline in pixels
+    float name_offset = 120.0f; // Space on the left for object names
+    float time_bar_x = window_pos.x + name_offset + (time - time_min) / (time_max - time_min) * timeline_length;
+
+    // Iterate over each object and its keyframes
+    int object_index = 0;
+    for (auto& [object, keyframes] : _objects_keyframes) {
+        float y_top = window_pos.y + line_height * object_index;   // Top Y of the space allocated for the object
+        float y_center = y_top + line_height / 2.0f;               // Y coordinate for drawing the timeline in the middle
+
+        // Draw the object name
+        ImGui::SetCursorScreenPos(ImVec2(window_pos.x, y_top + line_height / 4.0f));  // Slightly above the center
+        int skeleton_offset = (object->getName().length() > 9)? 9 : 0; //Remove "Skeleton_" from the name
+        ImGui::Text("%s", object->getName().c_str() + skeleton_offset);
+
+        // Draw the timeline line for this object (centered vertically)
+        draw_list->AddLine(ImVec2(window_pos.x + name_offset, y_center), ImVec2(window_pos.x + name_offset + timeline_length, y_center), IM_COL32(255, 255, 255, 255), 2.0f);
+
+        // Draw the keyframe dots
+        for (const auto& [keyframe_time, vec] : keyframes) {
+            float x = window_pos.x + name_offset + (keyframe_time - time_min) / (time_max - time_min) * timeline_length;
+            draw_list->AddCircleFilled(ImVec2(x, y_center), circle_radius, IM_COL32(255, 0, 0, 255));
+        }
+
+        object_index++;
+    }
+
+    // Draw the time bar (vertical line indicating the current time)
+    draw_list->AddLine(ImVec2(time_bar_x, window_pos.y), ImVec2(time_bar_x, window_pos.y + line_height * object_index), IM_COL32(0, 255, 0, 255), 2.0f);
+
 }

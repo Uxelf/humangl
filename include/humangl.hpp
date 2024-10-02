@@ -23,7 +23,7 @@
 
 
 const unsigned int SCR_WIDTH = 1600;
-const unsigned int SCR_HEIGHT = 800;
+const unsigned int SCR_HEIGHT = 900;
 
 const float CAMERA_SPEED = 4.5f;
 const float CAMERA_SENSIBILITY = 0.004f;

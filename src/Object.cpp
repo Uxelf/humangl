@@ -1,13 +1,13 @@
 #include <Object.hpp>
 
-Object::Object(): _material(NULL), _mesh(NULL), _parent(NULL)
+Object::Object(): _material(NULL), _mesh(NULL), _parent(NULL), _name("Default Name")
 {
     _scale = vec3(1, 1, 1);
     _global_transform = mat4(1);
     _local_transform = mat4(1);
 }
 
-Object::Object(Material* material, Mesh* mesh): _material(material), _mesh(mesh), _parent(NULL)
+Object::Object(Material* material, Mesh* mesh): _material(material), _mesh(mesh), _parent(NULL), _name("Default Name")
 {
     _scale = vec3(1, 1, 1);
     _global_transform = mat4(1);

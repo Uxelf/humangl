@@ -5,7 +5,6 @@
 #include <vector>
 #include <map>
 
-
 enum BODY_PART { Chest, Head, 
                 Left_Upper_Arm, Left_Forearm, Right_Upper_Arm, Right_Forearm, 
                 Left_Upper_Leg, Left_Foreleg, Right_Upper_Leg, Right_Foreleg};

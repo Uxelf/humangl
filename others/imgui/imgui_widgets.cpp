@@ -1,9 +1,9 @@
 // dear imgui, v1.91.2
 // (widgets code)
 
-/*
 
-Index of this file:
+
+//* Index of this file:
 
 //* [SECTION] Forward Declarations
 //* [SECTION] Widgets: Text, etc.
@@ -30,7 +30,6 @@ Index of this file:
 //* [SECTION] Widgets: BeginTabItem, EndTabItem, etc.
 //* [SECTION] Widgets: Columns, BeginColumns, EndColumns, etc.
 
-*/
 
 #if defined(_MSC_VER) && !defined(_CRT_SECURE_NO_WARNINGS)
 #define _CRT_SECURE_NO_WARNINGS

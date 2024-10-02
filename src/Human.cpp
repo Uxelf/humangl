@@ -66,6 +66,26 @@ Object(trousers_material, cube_mesh), Object(trousers_material, cube_mesh)
     _visual[Right_Foreleg].scale(vec3(1, 1.5, 1));
     _visual[Right_Foreleg].move(vec3(0, -0.75, 0));
 
+    _skeleton[Chest].setName("Skeleton_Chest");
+    _skeleton[Head].setName("Skeleton_Head");
+    _skeleton[Left_Upper_Arm].setName("Skeleton_Left_Upper_Arm");
+    _skeleton[Left_Forearm].setName("Skeleton_Left_Forearm");
+    _skeleton[Right_Upper_Arm].setName("Skeleton_Right_Upper_Arm");
+    _skeleton[Right_Forearm].setName("Skeleton_Right_Forearm");
+    _skeleton[Left_Upper_Leg].setName("Skeleton_Left_Upper_Leg");
+    _skeleton[Left_Foreleg].setName("Skeleton_Left_Foreleg");
+    _skeleton[Right_Upper_Leg].setName("Skeleton_Right_UpperLeg");
+    _skeleton[Right_Foreleg].setName("Skeleton_Right_Foreleg");
+
+    _visual[Head].setName("Head");
+    _visual[Left_Upper_Arm].setName("Left_Upper_Arm");
+    _visual[Left_Forearm].setName("Left_Forearm");
+    _visual[Right_Upper_Arm].setName("Right_Upper_Arm");
+    _visual[Right_Forearm].setName("Right_Forearm");
+    _visual[Left_Upper_Leg].setName("Left_Upper_Leg");
+    _visual[Left_Foreleg].setName("Left_Foreleg");
+    _visual[Right_Upper_Leg].setName("Right_UpperLeg");
+    _visual[Right_Foreleg].setName("Right_Foreleg");
 }
 
 Human::~Human(){

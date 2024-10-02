@@ -24,6 +24,8 @@ private:
 
     Object*                 _parent;
     std::vector<Object*>    _childs;
+
+    std::string _name;
   
     void updateMatrix();
     void addChild(Object* child);
@@ -40,12 +42,14 @@ public:
     const vec3  getPosition() const {return _position;}
     const vec3  getRotation() const {return _rotation;}
     const vec3  getScale() const {return _scale;}
+    const std::string getName() const {return _name;}
 
     void setColor(const vec3& new_color) {if (_material != NULL) _material->setColor(new_color);}
     void setPosition(const vec3& new_position);
     void setRotation(const vec3& new_rotation);
     void setScale(const vec3& new_scale);
     void setParent(Object* parent);
+    void setName(const std::string& name) {_name = name;}
 
     void move(const vec3& movement);
     void rotate(const vec3& rotation);
