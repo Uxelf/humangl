@@ -14,11 +14,12 @@ void Animation_controller::registerObject(Object* object){
         _animated_objects.push_back(object);
 }
 
-void Animation_controller::addKeyframe(Object* object, const float time, const vec3& rotation){
+void Animation_controller::addKeyframe(Object* object, const float time, const vec3& position, const vec3& rotation){
     registerObject(object);
 
-    std::map<float,vec3> keyframes = _objects_keyframes[object];
-    keyframes[time] = rotation;
+    std::map<float,properties> keyframes = _objects_keyframes[object];
+    keyframes[time].position = position;
+    keyframes[time].rotation = rotation;
     _objects_keyframes[object] = keyframes;
 }
 
@@ -32,17 +33,19 @@ void Animation_controller::animate(float time){
             lower--;
         }
 
-        vec3 average;
+        vec3 average_position;
+        vec3 average_rotation;
         if (lower == upper || upper == keyframes.end()){
-            average = lower->second;
+            average_position = lower->second.position;
+            average_rotation = lower->second.rotation;
         }
         else{
             float percentaje = (time - lower->first) / (upper->first - lower->first);
-            average.x = lower->second.x * (1.0f - percentaje) + upper->second.x * percentaje;
-            average.y = lower->second.y * (1.0f - percentaje) + upper->second.y * percentaje;
-            average.z = lower->second.z * (1.0f - percentaje) + upper->second.z * percentaje;
+            average_position = lower->second.position * (1.0f - percentaje) + upper->second.position * percentaje;
+            average_rotation = lower->second.rotation * (1.0f - percentaje) + upper->second.rotation * percentaje;
         }
-        object->setRotation(average);
+        object->setPosition(average_position);
+        object->setRotation(average_rotation);
     }
 }
 
@@ -78,8 +81,11 @@ void Animation_controller::saveAnimation(const std::string& file_name){
     std::ostringstream data;
 
     for (auto& [object, keyframes] : _objects_keyframes){
-        for (auto& [time, rotation] : keyframes){
-            data << object->getName() << " " << time << " " << rotation.x << " " << rotation.y << " " << rotation.z << std::endl;
+        for (auto& [time, properties] : keyframes){
+            data << object->getName() << " " << time << " " 
+            << properties.position.x << " " << properties.position.y << " " << properties.position.z << " "
+            << properties.rotation.x << " " << properties.rotation.y << " " << properties.rotation.z
+            << std::endl;
         }
     }
 
@@ -111,13 +117,15 @@ void Animation_controller::loadAnimation(const std::string& file_name){
         std::istringstream line_stream(line);
 
         vec3 rotation;
+        vec3 position;
         float time;
         std::string object_name;
 
-        line_stream >> object_name >> time >> rotation.x >> rotation.y >> rotation.z;
+        line_stream >> object_name >> time >> position.x >> position.y >> position.z >> rotation.x >> rotation.y >> rotation.z;
         for (unsigned int i = 0; i < _animated_objects.size(); i++){
             if (_animated_objects[i]->getName() == object_name){
-                _objects_keyframes[_animated_objects[i]][time] = rotation;
+                _objects_keyframes[_animated_objects[i]][time].position = position;
+                _objects_keyframes[_animated_objects[i]][time].rotation = rotation;
                 break;
             }
             if (i == _animated_objects.size()){

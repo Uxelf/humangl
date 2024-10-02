@@ -9,18 +9,23 @@
 
 const std::string animations_folder = "animations";
 
+struct properties{
+    vec3 position;
+    vec3 rotation;
+};
+
 class Animation_controller
 {
 private:
     std::vector<Object*> _animated_objects;
-    std::map<Object*, std::map<float,vec3>> _objects_keyframes;
+    std::map<Object*, std::map<float,properties>> _objects_keyframes;
 public:
     Animation_controller();
     ~Animation_controller();
 
-    const std::map<Object*, std::map<float,vec3>> getObjectsKeyframes() const {return _objects_keyframes;}
+    const std::map<Object*, std::map<float,properties>> getObjectsKeyframes() const {return _objects_keyframes;}
     void registerObject(Object* object);
-    void addKeyframe(Object* object, const float time, const vec3& rotation);
+    void addKeyframe(Object* object, const float time, const vec3& position, const vec3& rotation);
 
     void animate(float time);
 

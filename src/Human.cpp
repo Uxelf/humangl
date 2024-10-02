@@ -116,7 +116,8 @@ void Human::addObjectsToScene(std::vector<Object*>& scene_objects){
 
 }
 
-void Human::pose(const BODY_PART body_part, const vec3& rotation){
+void Human::pose(const BODY_PART body_part, const vec3& position, const vec3& rotation){
+    _skeleton[body_part].setPosition(position);
     _skeleton[body_part].setRotation(rotation);
 }
 

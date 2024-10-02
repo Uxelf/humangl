@@ -7,7 +7,7 @@ Camera camera(80, (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1, 100.0f);
 Object central_pivot;
 Object camera_pivot;
 
-void drawTimeline(float& time, float time_min, float time_max, std::map<Object*, std::map<float,vec3>> _objects_keyframes);
+void drawTimeline(float& time, float time_min, float time_max, std::map<Object*, std::map<float,properties>> _objects_keyframes);
 
 void loadScene(GLFWwindow* window){
 
@@ -64,7 +64,8 @@ void loadScene(GLFWwindow* window){
     ImGui_ImplOpenGL3_Init("#version 400");
     ImGui::StyleColorsDark();
 
-    vec3 body_vector[10];
+    std::vector<vec3> body_positions;
+    std::vector<vec3> body_rotations;
 
     ImGuiIO& io = ImGui::GetIO(); (void)io;
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
@@ -72,6 +73,7 @@ void loadScene(GLFWwindow* window){
 
     std::string parts[] = {"Chest", "Head", "Left_Upper_Arm", "Left_Forearm", "Right_Upper_Arm", "Right_Forearm", "Left_Upper_Leg", "Left_Foreleg", "Right_Upper_Leg", "Right_Foreleg"};
     float time = 0;
+    float time_scale = 1;
     float time_limit = 10;
     Animation_controller anim;
     bool play = false;
@@ -79,14 +81,16 @@ void loadScene(GLFWwindow* window){
     file_name[0] = 0;
 
     for (int i = 0; i < 10; i++){
-        anim.registerObject(human.getBodyPart(static_cast<BODY_PART>(i)));
+        Object* part = human.getBodyPart(static_cast<BODY_PART>(i));
+        anim.registerObject(part);
+        body_positions.push_back(part->getPosition());
+        body_rotations.push_back(part->getRotation());
     }
 
     //* Render loop
 
     //!Camera thingis
     
-    central_pivot.setName("Cameraman");
     camera_pivot.setParent(&central_pivot);
     camera_pivot.move(vec3(0, 2, 10));
     scene_objects.push_back(&central_pivot);
@@ -116,6 +120,7 @@ void loadScene(GLFWwindow* window){
             ImGui::SameLine();
             if (ImGui::Button("Load"))
                 anim.loadAnimation(file_name);
+            ImGui::InputFloat("Time scale", &time_scale);
             ImGui::InputFloat("Time limit", &time_limit);
             if (ImGui::Button("Play"))
                 play = true;
@@ -124,28 +129,35 @@ void loadScene(GLFWwindow* window){
                 play = false;
 
             if (play)
-                time += delta_time;
+                time += delta_time * time_scale;
             if (time > time_limit)
                 time -= time_limit;
             if (time < 0)
                 time = 0;
             if (play){
                 anim.animate(time);
-                for (int i = 0; i < 10; i++){
-                    body_vector[i] = human.getBodyPart(static_cast<BODY_PART>(i))->getRotation();
+                for (unsigned int i = 0; i < body_positions.size(); i++){
+                    Object* part = human.getBodyPart(static_cast<BODY_PART>(i));
+                    body_positions[i] = part->getPosition();
+                    body_rotations[i] = part->getRotation();
                 }
             }
             if (ImGui::SliderFloat("Time", &time, 0, time_limit)){
                 anim.animate(time);
-                for (int i = 0; i < 10; i++){
-                    body_vector[i] = human.getBodyPart(static_cast<BODY_PART>(i))->getRotation();
+                for (unsigned int i = 0; i < body_positions.size(); i++){
+                    Object* part = human.getBodyPart(static_cast<BODY_PART>(i));
+                    body_positions[i] = part->getPosition();
+                    body_rotations[i] = part->getRotation();
                 }
             }
             for (int i = 0; i < 10; i++){
-                std::string part_str = parts[i];
-                ImGui::DragFloat3(part_str.c_str(), body_vector[i].value_ptr());
-                if (ImGui::Button(("Save pose " + part_str).c_str()))
-                    anim.addKeyframe(human.getBodyPart(static_cast<BODY_PART>(i)), time, body_vector[i]);
+                std::string part_pos_str = parts[i] + " pos";
+                std::string part_rot_str = parts[i] + " rot";
+                ImGui::DragFloat3(part_pos_str.c_str(), body_positions[i].value_ptr());
+                ImGui::DragFloat3(part_rot_str.c_str(), body_rotations[i].value_ptr());
+                if (ImGui::Button(("Save pose " + parts[i]).c_str()))
+                    anim.addKeyframe(human.getBodyPart(static_cast<BODY_PART>(i)), time, body_positions[i], body_rotations[i]);
+                ImGui::Spacing();
             }
             ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
             ImGui::End();
@@ -159,7 +171,7 @@ void loadScene(GLFWwindow* window){
         }
 
         for (int i = 0; i < 10; i++)
-            human.pose(static_cast<BODY_PART>(i), body_vector[i]);
+            human.pose(static_cast<BODY_PART>(i), body_positions[i], body_rotations[i]);
 
         const mat4& projection = camera.getPerspectiveProjection();
         const mat4& view = camera.getViewMatrix();
@@ -189,7 +201,7 @@ void loadScene(GLFWwindow* window){
 
 
 #include <set>
-void drawTimeline(float& time, float time_min, float time_max, std::map<Object*, std::map<float,vec3>> _objects_keyframes) {
+void drawTimeline(float& time, float time_min, float time_max, std::map<Object*, std::map<float,properties>> _objects_keyframes) {
 
     // Get the ImGui window draw list for custom rendering
     ImDrawList* draw_list = ImGui::GetWindowDrawList();
