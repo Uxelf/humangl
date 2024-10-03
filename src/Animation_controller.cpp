@@ -16,11 +16,12 @@ void Animation_controller::registerObject(Object* object){
 
 void Animation_controller::addKeyframe(Object* object, const float time, const vec3& position, const vec3& rotation){
     registerObject(object);
+    _objects_keyframes[object][time].position = position;
+    _objects_keyframes[object][time].rotation = rotation;
+}
 
-    std::map<float,properties> keyframes = _objects_keyframes[object];
-    keyframes[time].position = position;
-    keyframes[time].rotation = rotation;
-    _objects_keyframes[object] = keyframes;
+void Animation_controller::removeKeyframe(Object* object, const float time){
+    _objects_keyframes[object].erase(time); 
 }
 
 void Animation_controller::animate(float time){

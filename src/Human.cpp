@@ -1,11 +1,5 @@
 #include <Human.hpp>
 
-/* Human::Human(Material* skin_material, Material* shirt_material, Material* trousers_material, Mesh* cube_mesh):
-_chest(shirt_material, cube_mesh), _head(skin_material, cube_mesh),
-_left_upper_arm(shirt_material, cube_mesh), _left_forearm(skin_material, cube_mesh),
-_right_upper_arm(shirt_material, cube_mesh), _right_forearm(skin_material, cube_mesh),
-_left_upper_leg(trousers_material, cube_mesh), _left_foreleg(trousers_material, cube_mesh),
-_right_upper_leg(trousers_material, cube_mesh), _right_foreleg(trousers_material, cube_mesh) */
 Human::Human(Material* skin_material, Material* shirt_material, Material* trousers_material, Mesh* cube_mesh):
 _visual{ Object(shirt_material, cube_mesh), Object(skin_material, cube_mesh),
 Object(shirt_material, cube_mesh), Object(skin_material, cube_mesh),
