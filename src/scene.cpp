@@ -150,19 +150,21 @@ void loadScene(GLFWwindow* window){
                     body_rotations[i] = part->getRotation();
                 }
             }
-            for (int i = 0; i < 10; i++){
-                std::string part_pos_str = parts[i] + " pos";
-                std::string part_rot_str = parts[i] + " rot";
-                ImGui::PushID(parts[i].c_str());
-                ImGui::DragFloat3(part_pos_str.c_str(), body_positions[i].value_ptr());
-                ImGui::DragFloat3(part_rot_str.c_str(), body_rotations[i].value_ptr());
-                if (ImGui::Button(("O")))
-                    anim.addKeyframe(human.getBodyPart(static_cast<BODY_PART>(i)), time, body_positions[i], body_rotations[i]);
-                ImGui::SameLine();
-                if (ImGui::Button(("X")))
-                    anim.removeKeyframe(human.getBodyPart(static_cast<BODY_PART>(i)), time);
-                ImGui::Spacing();
-                ImGui::PopID();
+            if (ImGui::CollapsingHeader("Body controllers")){
+                for (int i = 0; i < 10; i++){
+                    std::string part_pos_str = parts[i] + " pos";
+                    std::string part_rot_str = parts[i] + " rot";
+                    ImGui::PushID(parts[i].c_str());
+                    ImGui::DragFloat3(part_pos_str.c_str(), body_positions[i].value_ptr());
+                    ImGui::DragFloat3(part_rot_str.c_str(), body_rotations[i].value_ptr());
+                    if (ImGui::Button(("O")))
+                        anim.addKeyframe(human.getBodyPart(static_cast<BODY_PART>(i)), time, body_positions[i], body_rotations[i]);
+                    ImGui::SameLine();
+                    if (ImGui::Button(("X")))
+                        anim.removeKeyframe(human.getBodyPart(static_cast<BODY_PART>(i)), time);
+                    ImGui::Spacing();
+                    ImGui::PopID();
+                }
             }
             ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
             ImGui::End();
