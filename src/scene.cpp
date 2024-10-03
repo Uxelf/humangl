@@ -8,7 +8,7 @@ Object central_pivot;
 Object camera_pivot;
 
 void drawTimeline(float& time, float time_min, float time_max, std::map<Object*, std::map<float,properties>> _objects_keyframes);
-
+bool update_on_keyframe = false;
 void loadScene(GLFWwindow* window){
 
     glClearColor(0.1, 0.1, 0.1, 1.0f);
@@ -134,7 +134,7 @@ void loadScene(GLFWwindow* window){
                 time -= time_limit;
             if (time < 0)
                 time = 0;
-            if (play){
+            if (play || update_on_keyframe){
                 anim.animate(time);
                 for (unsigned int i = 0; i < body_positions.size(); i++){
                     Object* part = human.getBodyPart(static_cast<BODY_PART>(i));
@@ -246,7 +246,7 @@ void drawTimeline(float& time, float time_min, float time_max, std::map<Object*,
     // Draw the time bar (vertical line indicating the current time)
     draw_list->AddLine(ImVec2(time_bar_x, window_pos.y), ImVec2(time_bar_x, window_pos.y + line_height * object_index), IM_COL32(0, 255, 0, 255), 2.0f);
 
-    if (ImGui::Button("<")){
+    if (ImGui::ArrowButton("<", ImGuiDir_Left)){
         auto it = timestamps.lower_bound(time);
         if (it != timestamps.begin()){
             it--;
@@ -256,11 +256,22 @@ void drawTimeline(float& time, float time_min, float time_max, std::map<Object*,
         }
     }
     ImGui::SameLine();
-    if (ImGui::Button(">")){
+    if (ImGui::ArrowButton(">", ImGuiDir_Right)){
         auto it = timestamps.upper_bound(time);
         if (it != timestamps.end()){
             time = *it;
         }
     }
+    ImGui::Spacing();
+    ImGui::Text("Update");
+    ImGui::SameLine();
+    if (update_on_keyframe){
+        if (ImGui::Button("Y"))
+            update_on_keyframe = false;
+    }
+    else
+        if (ImGui::Button("N"))
+            update_on_keyframe = true;
+
 
 }
