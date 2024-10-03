@@ -64,27 +64,22 @@ void loadScene(GLFWwindow* window){
     ImGui_ImplOpenGL3_Init("#version 400");
     ImGui::StyleColorsDark();
 
-    std::vector<vec3> body_positions;
-    std::vector<vec3> body_rotations;
+    /* std::vector<vec3> body_positions;
+    std::vector<vec3> body_rotations; */
 
-    ImGuiIO& io = ImGui::GetIO(); (void)io;
-    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
-    io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
+    time_controllers time_c;
+    time_c.play = false;
+    time_c.time = 0;
+    time_c.time_limit = 10;
+    time_c.time_scale = 1;
+    time_c.delta_time = delta_time;
 
-    std::string parts[] = {"Chest", "Head", "Left_Upper_Arm", "Left_Forearm", "Right_Upper_Arm", "Right_Forearm", "Left_Upper_Leg", "Left_Foreleg", "Right_Upper_Leg", "Right_Foreleg"};
-    float time = 0;
-    float time_scale = 1;
-    float time_limit = 10;
     Animation_controller anim;
-    bool play = false;
-    char file_name[200];
-    file_name[0] = 0;
+    setUIHumanData(human);
 
     for (int i = 0; i < 10; i++){
         Object* part = human.getBodyPart(static_cast<BODY_PART>(i));
         anim.registerObject(part);
-        body_positions.push_back(part->getPosition());
-        body_rotations.push_back(part->getRotation());
     }
 
     //* Render loop
@@ -102,83 +97,14 @@ void loadScene(GLFWwindow* window){
         central_pivot.rotate(vec3(0, 0.2, 0));
 
         float current_frame = glfwGetTime();
-        delta_time = current_frame - last_frame;
-        last_frame = current_frame;  
+        time_c.delta_time = current_frame - last_frame;
+        last_frame = current_frame;
+        time_c.delta_time = delta_time;
 
         processInput(window, delta_time);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        ImGui_ImplOpenGL3_NewFrame();
-        ImGui_ImplGlfw_NewFrame();
-        ImGui::NewFrame();
-
-        {
-            ImGui::Begin("Animation controller");
-            ImGui::InputText("File", file_name, 200);
-            if (ImGui::Button("Save"))
-                anim.saveAnimation(file_name);
-            ImGui::SameLine();
-            if (ImGui::Button("Load"))
-                anim.loadAnimation(file_name);
-            ImGui::InputFloat("Time scale", &time_scale);
-            ImGui::InputFloat("Time limit", &time_limit);
-            if (ImGui::Button("Play"))
-                play = true;
-            ImGui::SameLine();
-            if (ImGui::Button("Stop"))
-                play = false;
-
-            if (play)
-                time += delta_time * time_scale;
-            if (time > time_limit)
-                time -= time_limit;
-            if (time < 0)
-                time = 0;
-            if (play || update_on_keyframe){
-                anim.animate(time);
-                for (unsigned int i = 0; i < body_positions.size(); i++){
-                    Object* part = human.getBodyPart(static_cast<BODY_PART>(i));
-                    body_positions[i] = part->getPosition();
-                    body_rotations[i] = part->getRotation();
-                }
-            }
-            if (ImGui::SliderFloat("Time", &time, 0, time_limit)){
-                anim.animate(time);
-                for (unsigned int i = 0; i < body_positions.size(); i++){
-                    Object* part = human.getBodyPart(static_cast<BODY_PART>(i));
-                    body_positions[i] = part->getPosition();
-                    body_rotations[i] = part->getRotation();
-                }
-            }
-            if (ImGui::CollapsingHeader("Body controllers")){
-                for (int i = 0; i < 10; i++){
-                    std::string part_pos_str = parts[i] + " pos";
-                    std::string part_rot_str = parts[i] + " rot";
-                    ImGui::PushID(parts[i].c_str());
-                    ImGui::DragFloat3(part_pos_str.c_str(), body_positions[i].value_ptr());
-                    ImGui::DragFloat3(part_rot_str.c_str(), body_rotations[i].value_ptr());
-                    if (ImGui::Button(("O")))
-                        anim.addKeyframe(human.getBodyPart(static_cast<BODY_PART>(i)), time, body_positions[i], body_rotations[i]);
-                    ImGui::SameLine();
-                    if (ImGui::Button(("X")))
-                        anim.removeKeyframe(human.getBodyPart(static_cast<BODY_PART>(i)), time);
-                    ImGui::Spacing();
-                    ImGui::PopID();
-                }
-            }
-            ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
-            ImGui::End();
-
-
-            ImGui::Begin("Timeline");
-
-            drawTimeline(time, 0, time_limit, anim.getObjectsKeyframes());
-
-            ImGui::End();
-        }
-
-        for (int i = 0; i < 10; i++)
-            human.pose(static_cast<BODY_PART>(i), body_positions[i], body_rotations[i]);
+        drawUI(anim, time_c, human);
 
         const mat4& projection = camera.getPerspectiveProjection();
         const mat4& view = camera.getViewMatrix();
@@ -192,8 +118,6 @@ void loadScene(GLFWwindow* window){
             scene_objects[i]->render();
         }
 
-
-
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
         
@@ -206,74 +130,3 @@ void loadScene(GLFWwindow* window){
     ImGui::DestroyContext();
 }
 
-
-#include <set>
-void drawTimeline(float& time, float time_min, float time_max, std::map<Object*, std::map<float,properties>> _objects_keyframes) {
-
-    // Get the ImGui window draw list for custom rendering
-    ImDrawList* draw_list = ImGui::GetWindowDrawList();
-
-    // Define the window size and timeline dimensions
-    ImVec2 window_pos = ImGui::GetCursorScreenPos();  // Top-left corner of the window
-    float line_height = 40.0f;  // Height allocated for each object's line
-    float circle_radius = 5.0f; // Radius of the keyframe dots
-    float timeline_length = 400.0f;  // Length of the timeline in pixels
-    float name_offset = 120.0f; // Space on the left for object names
-    float time_bar_x = window_pos.x + name_offset + (time - time_min) / (time_max - time_min) * timeline_length;
-
-    // Iterate over each object and its keyframes
-    int object_index = 0;
-    std::set<float> timestamps;
-    for (auto& [object, keyframes] : _objects_keyframes) {
-        float y_top = window_pos.y + line_height * object_index;   // Top Y of the space allocated for the object
-        float y_center = y_top + line_height / 2.0f;               // Y coordinate for drawing the timeline in the middle
-
-        // Draw the object name
-        ImGui::SetCursorScreenPos(ImVec2(window_pos.x, y_top + line_height / 4.0f));  // Slightly above the center
-        int skeleton_offset = (object->getName().length() > 9)? 9 : 0; //Remove "Skeleton_" from the name
-        ImGui::Text("%s", object->getName().c_str() + skeleton_offset);
-
-        // Draw the timeline line for this object (centered vertically)
-        draw_list->AddLine(ImVec2(window_pos.x + name_offset, y_center), ImVec2(window_pos.x + name_offset + timeline_length, y_center), IM_COL32(255, 255, 255, 255), 2.0f);
-
-        // Draw the keyframe dots
-        for (const auto& [keyframe_time, vec] : keyframes) {
-            float x = window_pos.x + name_offset + (keyframe_time - time_min) / (time_max - time_min) * timeline_length;
-            draw_list->AddCircleFilled(ImVec2(x, y_center), circle_radius, IM_COL32(255, 0, 0, 255));
-            timestamps.insert(keyframe_time);
-        }
-
-        object_index++;
-    }
-    // Draw the time bar (vertical line indicating the current time)
-    draw_list->AddLine(ImVec2(time_bar_x, window_pos.y), ImVec2(time_bar_x, window_pos.y + line_height * object_index), IM_COL32(0, 255, 0, 255), 2.0f);
-
-    if (ImGui::ArrowButton("<", ImGuiDir_Left)){
-        auto it = timestamps.lower_bound(time);
-        if (it != timestamps.begin()){
-            it--;
-            if (it != timestamps.begin() && *it == time)
-                it--;
-            time = *it;
-        }
-    }
-    ImGui::SameLine();
-    if (ImGui::ArrowButton(">", ImGuiDir_Right)){
-        auto it = timestamps.upper_bound(time);
-        if (it != timestamps.end()){
-            time = *it;
-        }
-    }
-    ImGui::Spacing();
-    ImGui::Text("Update");
-    ImGui::SameLine();
-    if (update_on_keyframe){
-        if (ImGui::Button("Y"))
-            update_on_keyframe = false;
-    }
-    else
-        if (ImGui::Button("N"))
-            update_on_keyframe = true;
-
-
-}

@@ -14,6 +14,14 @@ struct properties{
     vec3 rotation;
 };
 
+struct time_controllers{
+    float time;
+    float time_scale;
+    float time_limit;
+    float delta_time;
+    bool play;
+};
+
 class Animation_controller
 {
 private:

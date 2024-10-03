@@ -34,6 +34,7 @@ SRCS = \
 	$(SRCS_DIR)/Object.cpp \
 	$(SRCS_DIR)/scene.cpp \
 	$(SRCS_DIR)/Shader.cpp \
+	$(SRCS_DIR)/UI.cpp \
 	$(SRCS_DIR)/uniform_buffers.cpp \
 	$(SRCS_DIR)/Vector3.cpp \
 	$(SRCS_DIR)/Vector4.cpp \

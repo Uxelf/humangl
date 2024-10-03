@@ -92,7 +92,7 @@ void Animation_controller::saveAnimation(const std::string& file_name){
 
     file << data.str();
     file.close();
-    std::cout << "File saved successfully to: " << file_path << std::endl;
+    std::cout << "File " << file_path << " saved successfully to: " << file_path << std::endl;
 }
 
 void Animation_controller::loadAnimation(const std::string& file_name){
@@ -136,5 +136,5 @@ void Animation_controller::loadAnimation(const std::string& file_name){
     }
 
     file.close();
-    std::cout << "File loaded successfully" << std::endl;
+    std::cout << "File " << file_path << " loaded successfully" << std::endl;
 }

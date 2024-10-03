@@ -19,9 +19,9 @@ Object::~Object()
 }
 
 void Object::render(){
-    if(_update_matrix){
+    /* if(_update_matrix){ */
         updateMatrix();
-    }
+    /* } */
     if (_mesh != NULL && _material != NULL){
         _material->useShader();
 

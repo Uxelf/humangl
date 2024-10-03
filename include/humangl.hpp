@@ -10,6 +10,7 @@
 #include <Human.hpp>
 #include <Shader.hpp>
 #include <Animation_controller.hpp>
+#include <UI.hpp>
 
 #include <imgui.h>
 #include <imgui_impl_glfw.h>
@@ -21,13 +22,11 @@
 #include <math.h>
 #include <vector>
 
-
 const unsigned int SCR_WIDTH = 1800;
 const unsigned int SCR_HEIGHT = 1024;
 
 const float CAMERA_SPEED = 4.5f;
 const float CAMERA_SENSIBILITY = 0.004f;
-
 
 void            print_instructions();
 GLFWwindow*     createWindow(int width, int height, const std::string& name);
