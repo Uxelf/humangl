@@ -21,6 +21,7 @@ private:
     mat4        _local_transform;
     mat4        _global_transform;
     bool        _update_matrix;
+    bool        _visible;
 
     Object*                 _parent;
     std::vector<Object*>    _childs;
@@ -56,6 +57,7 @@ public:
     void rotate(const vec3& rotation);
     void scale(const vec3& scale_amount);
     void markUpdateMatrix() {_update_matrix = true;}
+    void toggleVisibility() {_visible = !_visible;}
 };
 
 #endif

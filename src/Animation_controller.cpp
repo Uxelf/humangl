@@ -21,7 +21,9 @@ void Animation_controller::addKeyframe(Object* object, const float time, const v
 }
 
 void Animation_controller::removeKeyframe(Object* object, const float time){
-    _objects_keyframes[object].erase(time); 
+    _objects_keyframes[object].erase(time);
+    if (_objects_keyframes[object].size() == 0)
+        _objects_keyframes.erase(object);
 }
 
 void Animation_controller::animate(float time){

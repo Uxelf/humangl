@@ -1,13 +1,13 @@
 #include <Object.hpp>
 
-Object::Object(): _material(NULL), _mesh(NULL), _parent(NULL), _name("Default Name")
+Object::Object(): _material(NULL), _mesh(NULL), _visible(true), _parent(NULL), _name("Default Name")
 {
     _scale = vec3(1, 1, 1);
     _global_transform = mat4(1);
     _local_transform = mat4(1);
 }
 
-Object::Object(Material* material, Mesh* mesh): _material(material), _mesh(mesh), _parent(NULL), _name("Default Name")
+Object::Object(Material* material, Mesh* mesh): _material(material), _mesh(mesh), _visible(true), _parent(NULL), _name("Default Name")
 {
     _scale = vec3(1, 1, 1);
     _global_transform = mat4(1);
@@ -19,10 +19,10 @@ Object::~Object()
 }
 
 void Object::render(){
-    /* if(_update_matrix){ */
+    if(_update_matrix){
         updateMatrix();
-    /* } */
-    if (_mesh != NULL && _material != NULL){
+    }
+    if (_visible && _mesh != NULL && _material != NULL){
         _material->useShader();
 
         _material->getShader().setMat4("model", _global_transform);

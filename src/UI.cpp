@@ -2,8 +2,6 @@
 
 extern bool update_on_keyframe;
 
-char file_name[200] = "";
-
 std::vector<Object*> body_parts;
 std::vector<vec3> positions;
 std::vector<vec3> rotations;
@@ -27,15 +25,11 @@ void drawUI(Animation_controller& anim, time_controllers& time_c, Human& human){
 
 void drawMainInterface(Animation_controller& anim, time_controllers& time_c, Human& human){
     
+    static bool visible_wings = false;
+
     ImGui::Begin("Animation controller");
 
-    ImGui::InputText("File", file_name, 200);
-    if (ImGui::Button("Save"))
-        anim.saveAnimation(file_name);
-    ImGui::SameLine();
-    if (ImGui::Button("Load"))
-        anim.loadAnimation(file_name);
-
+    
     ImGui::InputFloat("Time scale", &time_c.time_scale);
     ImGui::InputFloat("Time limit", &time_c.time_limit);
     if (ImGui::Button("Play"))
@@ -81,7 +75,21 @@ void drawMainInterface(Animation_controller& anim, time_controllers& time_c, Hum
             ImGui::Spacing();
             ImGui::PopID();
         }
+        if (ImGui::RadioButton("Toggle wings", visible_wings))
+            human.toggleWings();
     }
+
+    if (ImGui::CollapsingHeader("Save/Load animation")){
+        static char file_name[200] = "";
+        ImGui::InputText("File", file_name, 200);
+        if (ImGui::Button("Save"))
+            anim.saveAnimation(file_name);
+        ImGui::SameLine();
+        if (ImGui::Button("Load"))
+            anim.loadAnimation(file_name);
+    }
+
+
     ImGui::End();
 
     if (!time_c.play){

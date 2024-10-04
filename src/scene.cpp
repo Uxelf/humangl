@@ -77,7 +77,7 @@ void loadScene(GLFWwindow* window){
     Animation_controller anim;
     setUIHumanData(human);
 
-    for (int i = 0; i < 10; i++){
+    for (unsigned int i = 0; i < PARTS_NUMBER; i++){
         Object* part = human.getBodyPart(static_cast<BODY_PART>(i));
         anim.registerObject(part);
     }
