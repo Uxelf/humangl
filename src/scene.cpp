@@ -7,13 +7,10 @@ Camera camera(80, (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1, 100.0f);
 Object central_pivot;
 Object camera_pivot;
 
-void drawTimeline(float& time, float time_min, float time_max, std::map<Object*, std::map<float,properties>> _objects_keyframes);
 bool update_on_keyframe = false;
 void loadScene(GLFWwindow* window){
 
     glClearColor(0.1, 0.1, 0.1, 1.0f);
-    glfwSetCursorPosCallback(window, mouse_callback);
-    glfwSetScrollCallback(window, scroll_callback);
 
     //* Shaders load
 

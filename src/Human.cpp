@@ -121,3 +121,9 @@ void Human::toggleWings(){
     _visual[Left_Wing].toggleVisibility();
     _visual[Right_Wing].toggleVisibility();
 }
+
+void Human::resetPose(){
+    for (unsigned int i = 0; i < PARTS_NUMBER; ++i) {
+            _skeleton[i].setRotation(vec3(0, 0, 0));
+        }
+}

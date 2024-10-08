@@ -85,8 +85,15 @@ void drawMainInterface(Animation_controller& anim, time_controllers& time_c, Hum
         if (ImGui::Button("Save"))
             anim.saveAnimation(file_name);
         ImGui::SameLine();
-        if (ImGui::Button("Load"))
+        if (ImGui::Button("Load")){
+            human.resetPose();
             anim.loadAnimation(file_name);
+            anim.animate(time_c.time);
+            for (unsigned int i = 0; i < PARTS_NUMBER; i++){
+                positions[i] = body_parts[i]->getPosition();
+                rotations[i] = body_parts[i]->getRotation();
+            }
+        }
     }
 
 

@@ -34,7 +34,5 @@ void            loadScene(GLFWwindow* window);
 unsigned int    createUBO(unsigned int size);
 void            uniformBlockBind(int shader_ID, const std::string& name, GLuint binding_point);
 void            processInput(GLFWwindow* window, float delta_time);
-void            mouse_callback(GLFWwindow* window, double xpos, double ypos);
-void            scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 
 #endif
