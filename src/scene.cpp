@@ -22,6 +22,7 @@ void loadScene(GLFWwindow* window){
     Material material_blue(shader_lit, vec3(0.286, 0.275, 0.592));
     Material material_teal(shader_lit, vec3(0.055, 0.682, 0.682));
     Material material_brown(shader_lit, vec3(0.663, 0.49, 0.392));
+    Material material_grey(shader_lit, vec3(0.2, 0.2, 0.2));
 
 
     //* Mesh
@@ -35,6 +36,10 @@ void loadScene(GLFWwindow* window){
 
     Human human(&material_brown, &material_teal, &material_blue, &cube_mesh);
     human.addObjectsToScene(scene_objects);
+    Object ground(&material_grey, &cube_mesh);
+    ground.setPosition(vec3(0, -2.95, 0));
+    ground.setScale(vec3(10, 0.1, 10));
+    scene_objects.push_back(&ground);
 
 
     //* Uniform buffers objects
@@ -101,7 +106,7 @@ void loadScene(GLFWwindow* window){
         processInput(window, delta_time);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        drawUI(anim, time_c, human);
+        drawUI(anim, time_c, human, ground);
 
         const mat4& projection = camera.getPerspectiveProjection();
         const mat4& view = camera.getViewMatrix();

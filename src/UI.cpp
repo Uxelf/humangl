@@ -14,18 +14,19 @@ void setUIHumanData(Human& human){
     }
 }
 
-void drawUI(Animation_controller& anim, time_controllers& time_c, Human& human){
+void drawUI(Animation_controller& anim, time_controllers& time_c, Human& human, Object& ground){
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
 
-    drawMainInterface(anim, time_c, human);
+    drawMainInterface(anim, time_c, human, ground);
     drawTimeline(time_c.time, 0, time_c.time_limit, anim.getObjectsKeyframes());
 }
 
-void drawMainInterface(Animation_controller& anim, time_controllers& time_c, Human& human){
+void drawMainInterface(Animation_controller& anim, time_controllers& time_c, Human& human, Object& ground){
     
     static bool visible_wings = false;
+    static bool visible_ground = true;
 
     ImGui::Begin("Animation controller");
 
@@ -75,8 +76,10 @@ void drawMainInterface(Animation_controller& anim, time_controllers& time_c, Hum
             ImGui::Spacing();
             ImGui::PopID();
         }
-        if (ImGui::RadioButton("Toggle wings", visible_wings))
+        if (ImGui::RadioButton("Toggle wings", visible_wings)){
             human.toggleWings();
+            visible_wings = visible_wings;
+        }
     }
 
     if (ImGui::CollapsingHeader("Save/Load animation")){
@@ -94,6 +97,11 @@ void drawMainInterface(Animation_controller& anim, time_controllers& time_c, Hum
                 rotations[i] = body_parts[i]->getRotation();
             }
         }
+    }
+
+    if (ImGui::RadioButton("Toggle ground", visible_ground)){
+        ground.toggleVisibility();
+        visible_ground = !visible_ground;
     }
 
 
