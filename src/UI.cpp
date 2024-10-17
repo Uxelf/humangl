@@ -122,10 +122,10 @@ void drawTimeline(float& time, const float time_min, const float time_max, const
 
     // Define the window size and timeline dimensions
     ImVec2 window_pos = ImGui::GetCursorScreenPos();  // Top-left corner of the window
-    float line_height = 40.0f;  // Height allocated for each object's line
-    float circle_radius = 5.0f; // Radius of the keyframe dots
-    float timeline_length = 400.0f;  // Length of the timeline in pixels
-    float name_offset = 120.0f; // Space on the left for object names
+    float line_height = 40.0f;      // Height allocated for each object's line
+    float circle_radius = 5.0f;     // Radius of the keyframe dots
+    float timeline_length = 400.0f; // Length of the timeline in pixels
+    float name_offset = 120.0f;     // Space on the left for object names
     float time_bar_x = window_pos.x + name_offset + (time - time_min) / (time_max - time_min) * timeline_length;
 
     // Iterate over each object and its keyframes
@@ -171,17 +171,9 @@ void drawTimeline(float& time, const float time_min, const float time_max, const
             time = *it;
         }
     }
-    ImGui::Spacing();
-    ImGui::Text("Update");
-    ImGui::SameLine();
-    if (update_on_keyframe){
-        if (ImGui::Button("Y"))
-            update_on_keyframe = false;
+    if (ImGui::RadioButton("Update", update_on_keyframe)){
+        update_on_keyframe = !update_on_keyframe;
     }
-    else
-        if (ImGui::Button("N"))
-            update_on_keyframe = true;
-
     
     ImGui::End();
 

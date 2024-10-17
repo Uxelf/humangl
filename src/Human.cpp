@@ -64,20 +64,19 @@ void Human::setParentAndPosition(BODY_PART part, BODY_PART parent_part, const ve
 }
 
 void Human::initVisualParts(Material* shirt_material, Material* skin_material, Material* trousers_material, Mesh* cube_mesh) {
-        Material* materials[PARTS_NUMBER] = {
-            shirt_material, skin_material, // Chest and Head
-            shirt_material, skin_material, // Left Arm
-            shirt_material, skin_material, // Right Arm
-            trousers_material, trousers_material, // Left Leg
-            trousers_material, trousers_material, // Right Leg
-            skin_material, skin_material // Wings
-        };
+    Material* materials[PARTS_NUMBER] = {
+        shirt_material, skin_material, // Chest and Head
+        shirt_material, skin_material, // Left Arm
+        shirt_material, skin_material, // Right Arm
+        trousers_material, trousers_material, // Left Leg
+        trousers_material, trousers_material, // Right Leg
+        skin_material, skin_material // Wings
+    };
 
-        // Initialize _visual objects
-        for (unsigned int i = 0; i < PARTS_NUMBER; ++i) {
-            _visual[i] = Object(materials[i], cube_mesh);
-        }
+    for (unsigned int i = 0; i < PARTS_NUMBER; ++i) {
+        _visual[i] = Object(materials[i], cube_mesh);
     }
+}
 
 void Human::addObjectsToScene(std::vector<Object*>& scene_objects){
     scene_objects.push_back(&_skeleton[Chest]);

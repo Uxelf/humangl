@@ -55,8 +55,7 @@ void loadScene(GLFWwindow* window){
     //* Render settigns
 
     glEnable(GL_DEPTH_TEST);
-    // glPolygonMode(GL_FRONT_AND_BACK, [MODE]); // GL_LINE = Wireframe ; GL_FILL = Fill
-    glfwSwapInterval(1); //Vsync (not working in wsl)
+    glfwSwapInterval(1);
 
 
     //* UI
@@ -66,8 +65,6 @@ void loadScene(GLFWwindow* window){
     ImGui_ImplOpenGL3_Init("#version 400");
     ImGui::StyleColorsDark();
 
-    /* std::vector<vec3> body_positions;
-    std::vector<vec3> body_rotations; */
 
     time_controllers time_c;
     time_c.play = false;

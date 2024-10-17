@@ -57,11 +57,9 @@ static std::string prepareFileName(const std::string& file_name) {
     // Check if the file_name ends with ".anim"
     std::string extension = ".anim";
     if (file_name.size() < extension.size() || file_name.rfind(extension) != file_name.size() - extension.size()) {
-        // If the file doesn't end with ".anim", append the extension
         return animations_folder + "/" + file_name + extension;
     }
 
-    // If it already has ".anim", just return the full path
     return animations_folder + "/" + file_name;
 }
 

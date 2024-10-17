@@ -36,11 +36,8 @@ std::string getFileContent(const char* path){
     {
         file.open(path);
         std::stringstream shaderStream;
-        // read file's buffer contents into streams
-        shaderStream << file.rdbuf();		
-        // close file handlers
+        shaderStream << file.rdbuf();
         file.close();
-        // convert stream into string
         code = shaderStream.str();
     }
     catch(const std::ifstream::failure& e)
@@ -60,7 +57,6 @@ unsigned int createProgramID(const char* vShaderCode, const char* fShaderCode){
     vertex = glCreateShader(GL_VERTEX_SHADER);
     glShaderSource(vertex, 1, &vShaderCode, NULL);
     glCompileShader(vertex);
-    // print compile errors if any
     glGetShaderiv(vertex, GL_COMPILE_STATUS, &success);
     if(!success)
     {
@@ -72,7 +68,6 @@ unsigned int createProgramID(const char* vShaderCode, const char* fShaderCode){
     fragment = glCreateShader(GL_FRAGMENT_SHADER);
     glShaderSource(fragment, 1, &fShaderCode, NULL);
     glCompileShader(fragment);
-    // print compile errors if any
     glGetShaderiv(fragment, GL_COMPILE_STATUS, &success);
     if(!success)
     {
