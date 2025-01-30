@@ -95,6 +95,32 @@ void Animation_controller::saveAnimation(const std::string& file_name){
     std::cout << "File " << file_path << " saved successfully to: " << file_path << std::endl;
 }
 
+static bool CheckLineParams(const std::string& line){
+    std::stringstream ss(line);
+    std::vector<std::string> params;
+    std::string item;
+
+    while (std::getline(ss, item, ' ')){
+        params.push_back(item);
+    }
+
+    if (params.size() != 8)
+        return false;
+    
+    try{
+        for (int i = 1; i < 8; i++){
+            std::stof(params[i]);
+        }
+    }
+    catch(const std::exception& e)
+    {
+        std::cerr << e.what() << '\n';
+        return false;
+    }
+
+    return true;
+    
+}
 void Animation_controller::loadAnimation(const std::string& file_name){
     if (file_name.size() == 0){
         std::cerr << "File name is empty" << std::endl;
@@ -112,9 +138,15 @@ void Animation_controller::loadAnimation(const std::string& file_name){
         return;
     }
 
-    _objects_keyframes.clear();
+    std::map<Object*, std::map<float,properties>> temp_keyframes;
     std::string line;
+    int j = 0;
     while (std::getline(file, line)){
+        if (!CheckLineParams(line)){
+            std::cout << "File " << file_path << " wrong params at line " << j << std::endl;
+            file.close();
+            return;
+        }
         std::istringstream line_stream(line);
 
         vec3 rotation;
@@ -125,8 +157,8 @@ void Animation_controller::loadAnimation(const std::string& file_name){
         line_stream >> object_name >> time >> position.x >> position.y >> position.z >> rotation.x >> rotation.y >> rotation.z;
         for (unsigned int i = 0; i < _animated_objects.size(); i++){
             if (_animated_objects[i]->getName() == object_name){
-                _objects_keyframes[_animated_objects[i]][time].position = position;
-                _objects_keyframes[_animated_objects[i]][time].rotation = rotation;
+                temp_keyframes[_animated_objects[i]][time].position = position;
+                temp_keyframes[_animated_objects[i]][time].rotation = rotation;
                 break;
             }
             if (i == _animated_objects.size()){
@@ -135,6 +167,8 @@ void Animation_controller::loadAnimation(const std::string& file_name){
         }
     }
 
+    _objects_keyframes.clear();
+    _objects_keyframes.merge(temp_keyframes);
     file.close();
     std::cout << "File " << file_path << " loaded successfully" << std::endl;
 }
