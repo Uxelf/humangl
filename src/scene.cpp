@@ -93,7 +93,6 @@ void loadScene(GLFWwindow* window){
 
     while(!glfwWindowShouldClose(window)){
         
-        central_pivot.rotate(vec3(0, 0.2, 0));
 
         float current_frame = glfwGetTime();
         delta_time = current_frame - last_frame;
