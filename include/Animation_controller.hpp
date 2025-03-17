@@ -12,6 +12,7 @@ const std::string animations_folder = "animations";
 struct properties{
     vec3 position;
     vec3 rotation;
+    vec3 size;
 };
 
 struct time_controllers{
@@ -33,7 +34,7 @@ public:
 
     std::map<Object*, std::map<float,properties>> getObjectsKeyframes() const {return _objects_keyframes;}
     void registerObject(Object* object);
-    void addKeyframe(Object* object, const float time, const vec3& position, const vec3& rotation);
+    void addKeyframe(Object* object, const float time, const vec3& position, const vec3& rotation, const vec3& size);
     void removeKeyframe(Object* object, const float time);
 
     void animate(float time);

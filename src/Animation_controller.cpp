@@ -14,10 +14,11 @@ void Animation_controller::registerObject(Object* object){
         _animated_objects.push_back(object);
 }
 
-void Animation_controller::addKeyframe(Object* object, const float time, const vec3& position, const vec3& rotation){
+void Animation_controller::addKeyframe(Object* object, const float time, const vec3& position, const vec3& rotation, const vec3& size){
     registerObject(object);
     _objects_keyframes[object][time].position = position;
     _objects_keyframes[object][time].rotation = rotation;
+    _objects_keyframes[object][time].size = size;
 }
 
 void Animation_controller::removeKeyframe(Object* object, const float time){
@@ -38,17 +39,22 @@ void Animation_controller::animate(float time){
 
         vec3 average_position;
         vec3 average_rotation;
+        vec3 average_size;
+
         if (lower == upper || upper == keyframes.end()){
             average_position = lower->second.position;
             average_rotation = lower->second.rotation;
+            average_size = lower->second.size;
         }
         else{
             float percentaje = (time - lower->first) / (upper->first - lower->first);
             average_position = lower->second.position * (1.0f - percentaje) + upper->second.position * percentaje;
             average_rotation = lower->second.rotation * (1.0f - percentaje) + upper->second.rotation * percentaje;
+            average_size = lower->second.size * (1.0f - percentaje) + upper->second.size * percentaje;
         }
         object->setPosition(average_position);
         object->setRotation(average_rotation);
+        object->setScale(average_size);
     }
 }
 
@@ -85,7 +91,8 @@ void Animation_controller::saveAnimation(const std::string& file_name){
         for (auto& [time, properties] : keyframes){
             data << object->getName() << " " << time << " " 
             << properties.position.x << " " << properties.position.y << " " << properties.position.z << " "
-            << properties.rotation.x << " " << properties.rotation.y << " " << properties.rotation.z
+            << properties.rotation.x << " " << properties.rotation.y << " " << properties.rotation.z << " " 
+            << properties.size.x << " " << properties.size.y << " " << properties.size.z << " " 
             << std::endl;
         }
     }
@@ -104,11 +111,12 @@ static bool CheckLineParams(const std::string& line){
         params.push_back(item);
     }
 
-    if (params.size() != 8)
+
+    if (params.size() != 11)
         return false;
     
     try{
-        for (int i = 1; i < 8; i++){
+        for (int i = 1; i < 11; i++){
             std::stof(params[i]);
         }
     }
@@ -151,14 +159,17 @@ void Animation_controller::loadAnimation(const std::string& file_name){
 
         vec3 rotation;
         vec3 position;
+        vec3 size;
         float time;
         std::string object_name;
 
-        line_stream >> object_name >> time >> position.x >> position.y >> position.z >> rotation.x >> rotation.y >> rotation.z;
+        line_stream >> object_name >> time >> position.x >> position.y >> position.z >> rotation.x >> rotation.y >> rotation.z  >>
+        size.x >> size.y >> size.z;
         for (unsigned int i = 0; i < _animated_objects.size(); i++){
             if (_animated_objects[i]->getName() == object_name){
                 temp_keyframes[_animated_objects[i]][time].position = position;
                 temp_keyframes[_animated_objects[i]][time].rotation = rotation;
+                temp_keyframes[_animated_objects[i]][time].size = size;
                 break;
             }
             if (i == _animated_objects.size()){

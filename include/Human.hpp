@@ -31,7 +31,7 @@ public:
     ~Human();
 
     void addObjectsToScene(std::vector<Object*>& scene_objects);
-    void pose(const BODY_PART body_part, const vec3& postion, const vec3& rotation);
+    void pose(const BODY_PART body_part, const vec3& postion, const vec3& rotation, const vec3& size);
     Object* getBodyPart(const BODY_PART body_part);
     void toggleWings();
     void resetPose();
