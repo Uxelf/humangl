@@ -5,12 +5,15 @@ extern bool update_on_keyframe;
 std::vector<Object*> body_parts;
 std::vector<vec3> positions;
 std::vector<vec3> rotations;
+std::vector<vec3> size;
+
 
 void setUIHumanData(Human& human){
     for (unsigned int i = 0; i < PARTS_NUMBER; i++){
         body_parts.push_back(human.getBodyPart(static_cast<BODY_PART>(i)));
         positions.push_back(body_parts[i]->getPosition());
         rotations.push_back(body_parts[i]->getRotation());
+        size.push_back(body_parts[i]->getScale());
     }
 }
 
@@ -50,6 +53,7 @@ void drawMainInterface(Animation_controller& anim, time_controllers& time_c, Hum
         for (unsigned int i = 0; i < PARTS_NUMBER; i++){
             positions[i] = body_parts[i]->getPosition();
             rotations[i] = body_parts[i]->getRotation();
+            size[i] = body_parts[i]->getScale();
         }
     }
 
@@ -58,6 +62,7 @@ void drawMainInterface(Animation_controller& anim, time_controllers& time_c, Hum
         for (unsigned int i = 0; i < PARTS_NUMBER; i++){
             positions[i] = body_parts[i]->getPosition();
             rotations[i] = body_parts[i]->getRotation();
+            size[i] = body_parts[i]->getScale();
         }
     }
 
@@ -65,11 +70,13 @@ void drawMainInterface(Animation_controller& anim, time_controllers& time_c, Hum
         for (unsigned int i = 0; i < PARTS_NUMBER; i++){
             std::string part_pos_str = PARTS[i] + " pos";
             std::string part_rot_str = PARTS[i] + " rot";
+            std::string part_size_str = PARTS[i] + " size";
             ImGui::PushID(PARTS[i].c_str());
             ImGui::DragFloat3(part_pos_str.c_str(), positions[i].value_ptr());
             ImGui::DragFloat3(part_rot_str.c_str(), rotations[i].value_ptr());
+            ImGui::DragFloat3(part_size_str.c_str(), size[i].value_ptr());
             if (ImGui::Button(("O")))
-                anim.addKeyframe(human.getBodyPart(static_cast<BODY_PART>(i)), time_c.time, positions[i], rotations[i]);
+                anim.addKeyframe(human.getBodyPart(static_cast<BODY_PART>(i)), time_c.time, positions[i], rotations[i], size[i]);
             ImGui::SameLine();
             if (ImGui::Button(("X")))
                 anim.removeKeyframe(human.getBodyPart(static_cast<BODY_PART>(i)), time_c.time);
@@ -95,6 +102,7 @@ void drawMainInterface(Animation_controller& anim, time_controllers& time_c, Hum
             for (unsigned int i = 0; i < PARTS_NUMBER; i++){
                 positions[i] = body_parts[i]->getPosition();
                 rotations[i] = body_parts[i]->getRotation();
+                size[i] = body_parts[i]->getScale();
             }
         }
     }
@@ -109,7 +117,7 @@ void drawMainInterface(Animation_controller& anim, time_controllers& time_c, Hum
 
     if (!time_c.play){
             for (unsigned int i = 0; i < PARTS_NUMBER; i++)
-                human.pose(static_cast<BODY_PART>(i), positions[i], rotations[i]);
+                human.pose(static_cast<BODY_PART>(i), positions[i], rotations[i], size[i]);
     }
 }
 

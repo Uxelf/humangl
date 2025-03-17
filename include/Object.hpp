@@ -53,6 +53,7 @@ public:
     void setParent(Object* parent);
     void setName(const std::string& name) {_name = name;}
 
+
     void move(const vec3& movement);
     void rotate(const vec3& rotation);
     void scale(const vec3& scale_amount);

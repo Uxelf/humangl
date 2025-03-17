@@ -1,9 +1,9 @@
-Skeleton_Head 0 0 3 0 0 0 12
-Skeleton_Head 0.502 0 3 0 0 0 -3
-Skeleton_Head 1 0 3 0 0 0 12
-Skeleton_Right_Upper_Arm 0 1.1 2.75 0 0 0 146
-Skeleton_Right_Upper_Arm 0.502 1.1 2.75 0 0 0 120
-Skeleton_Right_Upper_Arm 1 1.1 2.75 0 0 0 146
-Skeleton_Right_Forearm 0 0 -1.35 0 0 0 41
-Skeleton_Right_Forearm 0.502 0 -1.35 0 0 0 20
-Skeleton_Right_Forearm 1 0 -1.35 0 0 0 41
+Skeleton_Head 0 0 3 0 0 0 12 1 1 1
+Skeleton_Head 0.502 0 3 0 0 0 -3 1 1 1
+Skeleton_Head 1 0 3 0 0 0 12 1 1 1
+Skeleton_Right_Upper_Arm 0 1.1 2.75 0 0 0 146 1 1 1
+Skeleton_Right_Upper_Arm 0.502 1.1 2.75 0 0 0 120 1 1 1
+Skeleton_Right_Upper_Arm 1 1.1 2.75 0 0 0 146 1 1 1
+Skeleton_Right_Forearm 0 0 -1.35 0 0 0 41 1 1 1
+Skeleton_Right_Forearm 0.502 0 -1.35 0 0 0 20 1 1 1
+Skeleton_Right_Forearm 1 0 -1.35 0 0 0 41 1 1 1
