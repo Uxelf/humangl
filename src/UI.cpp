@@ -36,6 +36,20 @@ void drawMainInterface(Animation_controller& anim, time_controllers& time_c, Hum
     
     ImGui::InputFloat("Time scale", &time_c.time_scale);
     ImGui::InputFloat("Time limit", &time_c.time_limit);
+
+    if (time_c.time_scale > 1000){
+        time_c.time_scale = 1000;
+    }
+    else if (time_c.time_scale < 0){
+        time_c.time_scale = 0;
+    }
+    if (time_c.time_limit > 1000){
+        time_c.time_limit = 1000;
+    }
+    else if (time_c.time_limit < 0){
+        time_c.time_limit = 0;
+    }
+
     if (ImGui::Button("Play"))
         time_c.play = true;
     ImGui::SameLine();

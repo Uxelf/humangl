@@ -150,6 +150,7 @@ void Animation_controller::loadAnimation(const std::string& file_name){
     std::string line;
     int j = 0;
     while (std::getline(file, line)){
+        j++;
         if (!CheckLineParams(line)){
             std::cout << "File " << file_path << " wrong params at line " << j << std::endl;
             file.close();
