@@ -58,7 +58,7 @@ void drawMainInterface(Animation_controller& anim, time_controllers& time_c, Hum
 
     if (time_c.play){
         time_c.time += time_c.delta_time * time_c.time_scale;
-        if (time_c.time > time_c.time_limit)
+        while (time_c.time > time_c.time_limit)
             time_c.time -= time_c.time_limit;
     }
 
